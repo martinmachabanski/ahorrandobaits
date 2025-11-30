@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>ahorrar bait</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="manifest" href="manifest.json">
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 20px;
+            text-align: center;
+        }
+
+        button {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+        }
+
+        .gemini {
+            background-color: #4285f4;
+        }
+
+        .chatgpt {
+            background-color: #10a37f;
+        }
+
+        #shared-content {
+            margin-bottom: 20px;
+            padding: 10px;
+            background: #f0f0f0;
+            border-radius: 8px;
+            word-break: break-all;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>ahorrar bait</h1>
+    <h3 style="color: #999; font-size: 12px;">v2.0 (Debug)</h3>
+
+    <div id="shared-content">
+        <!DOCTYPE html>
+        <html>
+
+        <head>
+            <title>ahorrar bait</title>
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <link rel="manifest" href="manifest.json">
+            <style>
+                body {
+                    font-family: sans-serif;
+                    padding: 20px;
+                    text-align: center;
+                }
+
+                button {
+                    display: block;
+                    width: 100%;
+                    padding: 15px;
+                    margin: 10px 0;
+                    font-size: 16px;
+                    border: none;
+                    border-radius: 8px;
+                    color: white;
+                    cursor: pointer;
+                }
+
+                .gemini {
+                    background-color: #4285f4;
+                }
+
+                .chatgpt {
+                    background-color: #10a37f;
+                }
+
+                #shared-content {
+                    margin-bottom: 20px;
+                    padding: 10px;
+                    background: #f0f0f0;
+                    border-radius: 8px;
+                    word-break: break-all;
+                }
+            </style>
+        </head>
+
+        <body>
+            Instrucciones:
+            Responde directamente la pregunta o interrogante del título basándote en el texto. Sé extremadamente breve y
+            directo. No incluyas introducciones ni resúmenes adicionales.
+            `;
+
+            document.getElementById('btn-gemini').addEventListener('click', () => {
+            if (!sharedUrl) return alert('No hay link para procesar');
+
+            // Copy prompt to clipboard (Mobile browsers restrict direct injection into other apps)
+            navigator.clipboard.writeText(prompt).then(() => {
+            alert('Prompt copiado al portapapeles. Pegalo en Gemini.');
+            window.open('https://gemini.google.com/app', '_blank');
+            });
+            });
+
+            document.getElementById('btn-chatgpt').addEventListener('click', () => {
+            if (!sharedUrl) return alert('No hay link para procesar');
+
+            navigator.clipboard.writeText(prompt).then(() => {
+            alert('Prompt copiado al portapapeles. Pegalo en ChatGPT.');
+            window.open('https://chatgpt.com/', '_blank');
+            });
+            });
+            </script>
+        </body>
+
+        </html>
