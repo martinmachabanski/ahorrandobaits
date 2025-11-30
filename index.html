@@ -44,7 +44,7 @@
 
 <body>
     <h1>ahorrar bait</h1>
-    <h3 style="color: #999; font-size: 12px;">v2.1 (Fixed)</h3>
+    <h3 style="color: #999; font-size: 12px;">v2.2 (Share)</h3>
 
     <div id="shared-content">
         <p>Esperando link...</p>
@@ -103,22 +103,47 @@ Instrucciones:
 Responde directamente la pregunta o interrogante del título basándote en el texto. Sé extremadamente breve y directo. No incluyas introducciones ni resúmenes adicionales.
     `;
 
-        document.getElementById('btn-gemini').addEventListener('click', () => {
+        async function shareToApp(text) {
+            if (navigator.share) {
+                try {
+                    await navigator.share({
+                        text: text
+                    });
+                    return true;
+                } catch (err) {
+                    console.log('Error sharing:', err);
+                    return false;
+                }
+            }
+            return false;
+        }
+
+        document.getElementById('btn-gemini').addEventListener('click', async () => {
             if (!sharedUrl) return alert('No hay link para procesar');
 
-            navigator.clipboard.writeText(prompt).then(() => {
-                alert('Prompt copiado al portapapeles. Pegalo en Gemini.');
-                window.open('https://gemini.google.com/app', '_blank');
-            });
+            // Try native share first
+            const shared = await shareToApp(prompt);
+
+            // Fallback if share failed/cancelled
+            if (!shared) {
+                navigator.clipboard.writeText(prompt).then(() => {
+                    alert('Prompt copiado. Pégalo en Gemini.');
+                    window.open('https://gemini.google.com/app', '_blank');
+                });
+            }
         });
 
-        document.getElementById('btn-chatgpt').addEventListener('click', () => {
+        document.getElementById('btn-chatgpt').addEventListener('click', async () => {
             if (!sharedUrl) return alert('No hay link para procesar');
 
-            navigator.clipboard.writeText(prompt).then(() => {
-                alert('Prompt copiado al portapapeles. Pegalo en ChatGPT.');
-                window.open('https://chatgpt.com/', '_blank');
-            });
+            const shared = await shareToApp(prompt);
+
+            if (!shared) {
+                navigator.clipboard.writeText(prompt).then(() => {
+                    alert('Prompt copiado. Pégalo en ChatGPT.');
+                    window.open('https://chatgpt.com/', '_blank');
+                });
+            }
         });
     </script>
 </body>
