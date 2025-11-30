@@ -44,78 +44,83 @@
 
 <body>
     <h1>ahorrar bait</h1>
-    <h3 style="color: #999; font-size: 12px;">v2.0 (Debug)</h3>
+    <h3 style="color: #999; font-size: 12px;">v2.1 (Fixed)</h3>
 
     <div id="shared-content">
-        <!DOCTYPE html>
-        <html>
+        <p>Esperando link...</p>
+    </div>
 
-        <head>
-            <title>ahorrar bait</title>
-            <meta name="viewport" content="width=device-width, initial-scale=1">
-            <link rel="manifest" href="manifest.json">
-            <style>
-                body {
-                    font-family: sans-serif;
-                    padding: 20px;
-                    text-align: center;
-                }
+    <button id="btn-gemini" class="gemini">Abrir en Gemini</button>
+    <button id="btn-chatgpt" class="chatgpt">Abrir en ChatGPT</button>
 
-                button {
-                    display: block;
-                    width: 100%;
-                    padding: 15px;
-                    margin: 10px 0;
-                    font-size: 16px;
-                    border: none;
-                    border-radius: 8px;
-                    color: white;
-                    cursor: pointer;
-                }
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('./service-worker.js');
+        }
 
-                .gemini {
-                    background-color: #4285f4;
-                }
+        // Parse query parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const rawTitle = urlParams.get('title') || '';
+        const rawText = urlParams.get('text') || '';
+        const rawUrl = urlParams.get('url') || '';
 
-                .chatgpt {
-                    background-color: #10a37f;
-                }
+        // Helper to find URL in text
+        function findUrl(str) {
+            const match = str.match(/https?:\/\/[^\s]+/);
+            return match ? match[0] : '';
+        }
 
-                #shared-content {
-                    margin-bottom: 20px;
-                    padding: 10px;
-                    background: #f0f0f0;
-                    border-radius: 8px;
-                    word-break: break-all;
-                }
-            </style>
-        </head>
+        // Robust URL extraction
+        const sharedUrl = rawUrl || findUrl(rawText) || findUrl(rawTitle);
 
-        <body>
-            Instrucciones:
-            Responde directamente la pregunta o interrogante del título basándote en el texto. Sé extremadamente breve y
-            directo. No incluyas introducciones ni resúmenes adicionales.
-            `;
+        // Context is everything else
+        const sharedText = rawText.replace(sharedUrl, '').trim() || rawTitle.replace(sharedUrl, '').trim();
 
-            document.getElementById('btn-gemini').addEventListener('click', () => {
-            if (!sharedUrl) return alert('No hay link para procesar');
+        const contentDiv = document.getElementById('shared-content');
 
-            // Copy prompt to clipboard (Mobile browsers restrict direct injection into other apps)
-            navigator.clipboard.writeText(prompt).then(() => {
-            alert('Prompt copiado al portapapeles. Pegalo en Gemini.');
-            window.open('https://gemini.google.com/app', '_blank');
-            });
-            });
+        // Debug info
+        const debugInfo = `
+        <div style="font-size: 10px; color: #666; margin-top: 20px; text-align: left; border-top: 1px solid #ccc; padding-top: 5px;">
+            <strong>Debug Info:</strong><br>
+            URL Param: ${rawUrl}<br>
+            Text Param: ${rawText}<br>
+            Title Param: ${rawTitle}<br>
+            Detected URL: ${sharedUrl}
+        </div>
+    `;
 
-            document.getElementById('btn-chatgpt').addEventListener('click', () => {
+        if (sharedUrl) {
+            contentDiv.innerHTML = `<p><strong>Link recibido:</strong><br>${sharedUrl}</p>` + debugInfo;
+        } else {
+            contentDiv.innerHTML = `<p>Comparte un link con esta app para comenzar.</p>` + debugInfo;
+        }
+
+        const prompt = `
+Analiza el siguiente artículo: ${sharedUrl}
+${sharedText ? `Contexto: ${sharedText}` : ''}
+
+Instrucciones:
+Responde directamente la pregunta o interrogante del título basándote en el texto. Sé extremadamente breve y directo. No incluyas introducciones ni resúmenes adicionales.
+    `;
+
+        document.getElementById('btn-gemini').addEventListener('click', () => {
             if (!sharedUrl) return alert('No hay link para procesar');
 
             navigator.clipboard.writeText(prompt).then(() => {
-            alert('Prompt copiado al portapapeles. Pegalo en ChatGPT.');
-            window.open('https://chatgpt.com/', '_blank');
+                alert('Prompt copiado al portapapeles. Pegalo en Gemini.');
+                window.open('https://gemini.google.com/app', '_blank');
             });
-            });
-            </script>
-        </body>
+        });
 
-        </html>
+        document.getElementById('btn-chatgpt').addEventListener('click', () => {
+            if (!sharedUrl) return alert('No hay link para procesar');
+
+            navigator.clipboard.writeText(prompt).then(() => {
+                alert('Prompt copiado al portapapeles. Pegalo en ChatGPT.');
+                window.open('https://chatgpt.com/', '_blank');
+            });
+        });
+    </script>
+</body>
+
+</html>
